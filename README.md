@@ -31,7 +31,9 @@ Verilog_Repository/
 │   │
 │   ├── motor_mixing/                   # Hardware Motor Mixer Datapath
 │   │   ├── motor_mixer.v               # Quadcopter X-Frame force/moment-to-ESC duty cycle mixer
-│   │   └── u2_to_mixer.v               # Roll torque (U2) format adapter (sfix24_En16 -> sfix36_En30)
+│   │   ├── u2_to_mixer.v               # Roll torque (U2) format adapter (sfix24_En16 -> sfix36_En30)
+│   │   ├── quad_thrust_to_pwm.v        # 4-channel autonomous thrust-to-PWM adapter (feeds U1/U4/PWM mux)
+│   │   └── thrust_to_pwm_channel.v     # 3-stage piecewise linear motor thrust (sfix30_En16) to PWM pulse converter
 │   │
 │   ├── pwm_generation/                 # Hardware ESC Actuator Drivers
 │   │   ├── pwm_gen_new.v               # Multi-rate parameterized PWM generator (10/100 MHz, 50 Hz/400 Hz)
@@ -95,7 +97,8 @@ Verilog_Repository/
 │   └── fir_coeffs.coe                  # 51-tap Hamming window FIR filter coefficients
 │
 ├── constraints/                        # Board-Level Physical Pin and Timing Constraints
-│   └── pynq_test_flight.xdc            # Master PYNQ-Z2 flight constraints (PWM ESCs JA1/JA4/JB1/JB4 & I2C)
+│   ├── pynq_test_flight.xdc            # Master PYNQ-Z2 flight constraints (PWM ESCs JA1/JA4/JB1/JB4 & I2C)
+│   └── pynq_multicycle_timing.xdc      # Multicycle path timing exception constraints for PYNQ-Z2 closure
 │
 └── testbenches/                        # Verification Testbenches
     ├── tb_closed_loop_fil.sv           # Full closed-loop 6DOF FIL SystemVerilog testbench (40 substeps)
@@ -128,7 +131,7 @@ Verilog_Repository/
 - Contains an automatic timeout failsafe: if pulses are missing for $> 100\text{ ms}$, the failsafe flag asserts immediately, zeroing the throttle output.
 - Memory-mapped into the ARM Cortex-A9 address space via AXI4-Lite slave registers (`slv_reg0` to `slv_reg4`), enabling bare-metal Vitis software to read calibrated stick inputs directly with zero CPU interrupt latency.
 
-### 3.2 Quadcopter Motor Mixer (`vitis_conversion/motor_mixing/`)
+### 3.2 Quadcopter Motor Mixer & Thrust Mapping (`vitis_conversion/motor_mixing/`)
 - Implements the X-configuration quadcopter mixing equations:
   $$\begin{aligned}
   M_1 &= U_1 - U_2 + U_3 + U_4 \\
@@ -137,6 +140,9 @@ Verilog_Repository/
   M_4 &= U_1 - U_2 - U_3 - U_4
   \end{aligned}$$
 - Direct hardware scaling ensures zero latency between attitude PID calculation and motor PWM generation.
+- **Thrust-to-PWM Calibration (`quad_thrust_to_pwm.v` & `thrust_to_pwm_channel.v`)**:
+  - Implements high-speed 4-channel piecewise linear mapping from calculated motor thrust ($sfix30\_En16$) to microsecond ESC pulse widths ($1000\text{--}2000\text{ }\mu\text{s}$).
+  - Drives directly into `U1_mux.v`, `U4_mux.v`, and `pwm_mux.v` for seamless switching between autonomous Vitis flight loops and RC pilot overrides.
 
 ### 3.3 Multi-Rate PWM Generator (`vitis_conversion/pwm_generation/`)
 - Parameterized clock input (`CLK_FREQ_MHZ`, e.g., 10 MHz or 100 MHz).
@@ -146,6 +152,12 @@ Verilog_Repository/
 ### 3.4 Hardware Multiplexing & Overrides (`vitis_conversion/multiplexers_and_routing/`)
 - Facilitates autonomous transition between pilot manual control and Vitis software flight control loops.
 - `rc_cmd_mux.v`, `U1_mux.v`, and `U4_mux.v` allow dynamic routing of throttle, attitude, and yaw setpoints without recompiling FPGA bitstreams.
+
+### 3.5 Multicycle Path Timing Constraints (`constraints/pynq_multicycle_timing.xdc`)
+- Formulates Vivado static timing analysis (STA) exceptions for cross-domain synchronous multi-rate paths on PYNQ-Z2:
+  - 10 MHz to 250 Hz control loop decimation datapath (`set_multicycle_path 2 -setup`).
+  - 100 MHz to 50 Hz pulse-width measurement dividers (`set_multicycle_path 5`).
+- Guarantees timing closure across the FPGA fabric without requiring artificial pipeline registers.
 
 ---
 
