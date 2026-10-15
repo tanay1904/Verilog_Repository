@@ -61,8 +61,7 @@ Verilog_Repository/
 │   │   ├── mpu6050_driver.v            # Top-level subsystem integrating HLS core, FIFOs, and I2C master
 │   │   ├── fifo_i2c_mgr.v              # FIFO-to-I2C manager bridging HLS streaming FIFOs to I2C master
 │   │   ├── i2c_master.vhd              # Hardware Digilent I2C master core in VHDL
-│   │   ├── mpu6050_pynq_constraints.xdc# Pin constraints for PYNQ-Z2 board (SCL/SDA)
-│   │   └── mpu6050_driver_hw.bd        # Vivado Block Design wiring PS7, AXI GPIOs, and MPU driver
+│   │   └── mpu6050_pynq_constraints.xdc# Pin constraints for PYNQ-Z2 board (SCL/SDA)
 │   │
 │   └── hls_mpu6050_axi_core/           # Vitis HLS Synthesized MPU-6050 AXI I2C Controller Core
 │       ├── top_mpu6050_iic.v           # Top-level AXI I2C master state machine
@@ -97,20 +96,6 @@ Verilog_Repository/
 │
 ├── constraints/                        # Board-Level Physical Pin and Timing Constraints
 │   └── pynq_test_flight.xdc            # Master PYNQ-Z2 flight constraints (PWM ESCs JA1/JA4/JB1/JB4 & I2C)
-│
-├── block_designs/                      # Vivado Block Design Schemas (.bd)
-│   ├── Altitude_Loop_FIL.bd            # Hardware-in-the-loop Altitude loop block design
-│   ├── Altitude_Yaw.bd                 # Combined Barometric Altitude and Heading block design
-│   ├── Attitude_Loop.bd                # Roll/Pitch attitude control loop block design
-│   ├── Attitude_Test_Isolated.bd       # Isolated attitude controller test harness
-│   ├── RC_Ctrl_Attitude.bd             # Full RC-controlled attitude block design
-│   ├── fabric_rc_ctrl.bd               # Pure FPGA fabric RC controller block design
-│   ├── final_sys.bd                    # Full cascaded multi-loop flight system block design
-│   ├── Complimentary_Filter.bd         # Standalone hardware complementary filter block design
-│   ├── Altitude_Filter.bd              # 3rd-order alpha altitude filter block design
-│   ├── Attitude_Atitude_1kHz.bd        # High-rate 1 kHz attitude control block design
-│   ├── Sensor.bd                       # Sensor DAQ block design
-│   └── Yaw_Branch.bd                   # Heading stabilization block design
 │
 └── testbenches/                        # Verification Testbenches
     ├── tb_closed_loop_fil.sv           # Full closed-loop 6DOF FIL SystemVerilog testbench (40 substeps)

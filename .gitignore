@@ -28,6 +28,8 @@
 *.bit
 *.bin
 *.dcp
+*.bd
+*.bda
 
 # Operating System Files
 .DS_Store
