@@ -53,7 +53,9 @@ Verilog_Repository/
 │   ├── format_converters/              # Fixed-Point & Precision Bus Adapters
 │   │   ├── Sfix_En10_to_En11.v         # Fixed-point format converter (sfix16_En10 -> sfix16_En11)
 │   │   ├── sfix_converter.v            # Signed fixed-point precision alignment
-│   │   └── vest.v                      # Velocity estimator format adapter (sfix16_En12 -> sfix17_En12)
+│   │   ├── vest.v                      # Velocity estimator format adapter (sfix16_En12 -> sfix17_En12)
+│   │   ├── theta_sfix32En29_to_sfix24En16.v # Pitch angle format adapter (sfix32_En29 -> sfix24_En16)
+│   │   └── Uest_sfix16En12_to_sfix17En12.v  # Forward velocity estimator format adapter (sfix16 -> sfix17)
 │   │
 │   ├── mpu6050_hardware_driver/        # Pure RTL MPU-6050 Hardware Driver Subsystem
 │   │   ├── mpu6050_driver.v            # Top-level subsystem integrating HLS core, FIFOs, and I2C master
@@ -72,6 +74,7 @@ Verilog_Repository/
 │       └── top_mpu6050_iic_*.v         # Floating-point/DSP conversion arithmetic units
 │
 ├── system_integration/                 # Full System Hardware Interconnect Top Modules
+│   ├── Flight_Controller_Top.v         # Altitude loop top wrapper with HW 250 Hz sample-rate generator
 │   ├── complementary_filter_top.v      # Hardware wrapper combining complementary filter, pulse generator, and phi_acc
 │   ├── Attitude_Control_System_Top.v   # Complete FPGA Attitude Control Loop Top Integration
 │   ├── Alti_Yaw_top.v                  # Barometric Altitude & Yaw Gyro Heading Top Integration
@@ -81,11 +84,37 @@ Verilog_Repository/
 │   ├── Integrator.v                    # Double integrator with anti-windup for physical kinematics
 │   └── proposed_Integrator.v           # Enhanced anti-windup integrator
 │
-├── legacy_rc_frontend/                 # Dedicated Single-Channel RC Decoders
+├── legacy_rc_frontend/                 # Dedicated Single-Channel RC Decoders & AXI IP Wrappers
+│   ├── throttle_rc_decoder_v1_0.v      # Single-channel throttle AXI4-Lite IP wrapper
+│   ├── throttle_rc_decoder_v1_0_S00_AXI.v # AXI memory-mapped slave registers for throttle decoder
 │   ├── throttle_pwm_decoder.v          # Standalone throttle PWM pulse width decoder with failsafe & LED
 │   └── throttle_rc_frontend.v          # Front-end synchronizer for throttle receiver input
 │
+├── multirate_dsp/                      # High-Speed Multirate Digital Signal Processing Engine
+│   ├── multirate_filter_top.v          # 120 MSPS decimation-by-3 & interpolation-by-12 51-tap FIR engine
+│   ├── tb_multirate_filter.v           # Verification testbench for decimation and interpolation
+│   └── fir_coeffs.coe                  # 51-tap Hamming window FIR filter coefficients
+│
+├── constraints/                        # Board-Level Physical Pin and Timing Constraints
+│   └── pynq_test_flight.xdc            # Master PYNQ-Z2 flight constraints (PWM ESCs JA1/JA4/JB1/JB4 & I2C)
+│
+├── block_designs/                      # Vivado Block Design Schemas (.bd)
+│   ├── Altitude_Loop_FIL.bd            # Hardware-in-the-loop Altitude loop block design
+│   ├── Altitude_Yaw.bd                 # Combined Barometric Altitude and Heading block design
+│   ├── Attitude_Loop.bd                # Roll/Pitch attitude control loop block design
+│   ├── Attitude_Test_Isolated.bd       # Isolated attitude controller test harness
+│   ├── RC_Ctrl_Attitude.bd             # Full RC-controlled attitude block design
+│   ├── fabric_rc_ctrl.bd               # Pure FPGA fabric RC controller block design
+│   ├── final_sys.bd                    # Full cascaded multi-loop flight system block design
+│   ├── Complimentary_Filter.bd         # Standalone hardware complementary filter block design
+│   ├── Altitude_Filter.bd              # 3rd-order alpha altitude filter block design
+│   ├── Attitude_Atitude_1kHz.bd        # High-rate 1 kHz attitude control block design
+│   ├── Sensor.bd                       # Sensor DAQ block design
+│   └── Yaw_Branch.bd                   # Heading stabilization block design
+│
 └── testbenches/                        # Verification Testbenches
+    ├── tb_closed_loop_fil.sv           # Full closed-loop 6DOF FIL SystemVerilog testbench (40 substeps)
+    ├── rc_decoder_tb.v                 # 100 MHz 4/6-channel RC input decoder testbench
     ├── tb_mpu6050_driver.v             # Full closed-loop MPU-6050 driver + behavioral I2C slave testbench
     ├── tb_fifo_i2c_mgr.v               # FIFO-to-I2C manager read/write handshake testbench
     ├── tb_motor_mixer.v                # Motor mixer testbench
