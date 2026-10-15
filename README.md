@@ -55,6 +55,12 @@ Verilog_Repository/
 │   │   ├── sfix_converter.v            # Signed fixed-point precision alignment
 │   │   └── vest.v                      # Velocity estimator format adapter (sfix16_En12 -> sfix17_En12)
 │   │
+│   ├── mpu6050_hardware_driver/        # Pure RTL MPU-6050 Hardware Driver Subsystem
+│   │   ├── mpu6050_driver.v            # Top-level subsystem integrating HLS core, FIFOs, and I2C master
+│   │   ├── fifo_i2c_mgr.v              # FIFO-to-I2C manager bridging HLS streaming FIFOs to I2C master
+│   │   ├── i2c_master.vhd              # Hardware Digilent I2C master core in VHDL
+│   │   └── mpu6050_pynq_constraints.xdc# Pin constraints for PYNQ-Z2 board (SCL/SDA)
+│   │
 │   └── hls_mpu6050_axi_core/           # Vitis HLS Synthesized MPU-6050 AXI I2C Controller Core
 │       ├── top_mpu6050_iic.v           # Top-level AXI I2C master state machine
 │       ├── top_mpu6050_iic_mpu_init_1.v # InvenSense MPU-6050 hardware initialization engine
@@ -78,6 +84,8 @@ Verilog_Repository/
 │   └── throttle_rc_frontend.v          # Front-end synchronizer for throttle receiver input
 │
 └── testbenches/                        # Verification Testbenches
+    ├── tb_mpu6050_driver.v             # Full closed-loop MPU-6050 driver + behavioral I2C slave testbench
+    ├── tb_fifo_i2c_mgr.v               # FIFO-to-I2C manager read/write handshake testbench
     ├── tb_motor_mixer.v                # Motor mixer testbench
     ├── tb_PWM_channels.v               # 4-channel PWM generator testbench
     ├── tb_pulse_generator_250Hz.v      # 250 Hz timing testbench
