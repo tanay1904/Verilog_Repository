@@ -1,0 +1,35 @@
+# ==========================================
+# Vivado & Verilog RTL .gitignore
+# ==========================================
+
+# Simulation and Vivado run artifacts
+*.jou
+*.log
+*.str
+*.pb
+*.wdb
+*.vcd
+*.fsdb
+*.vpd
+*.key
+*.backup.*
+*.tmp
+
+# Vivado project caches and netlists
+.Xil/
+.runs/
+.cache/
+.gen/
+.ip_user_files/
+.sim/
+
+# Hardware platforms, bitstreams, and checkpoints
+*.xsa
+*.bit
+*.bin
+*.dcp
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
