@@ -59,7 +59,8 @@ Verilog_Repository/
 │   │   ├── mpu6050_driver.v            # Top-level subsystem integrating HLS core, FIFOs, and I2C master
 │   │   ├── fifo_i2c_mgr.v              # FIFO-to-I2C manager bridging HLS streaming FIFOs to I2C master
 │   │   ├── i2c_master.vhd              # Hardware Digilent I2C master core in VHDL
-│   │   └── mpu6050_pynq_constraints.xdc# Pin constraints for PYNQ-Z2 board (SCL/SDA)
+│   │   ├── mpu6050_pynq_constraints.xdc# Pin constraints for PYNQ-Z2 board (SCL/SDA)
+│   │   └── mpu6050_driver_hw.bd        # Vivado Block Design wiring PS7, AXI GPIOs, and MPU driver
 │   │
 │   └── hls_mpu6050_axi_core/           # Vitis HLS Synthesized MPU-6050 AXI I2C Controller Core
 │       ├── top_mpu6050_iic.v           # Top-level AXI I2C master state machine
@@ -71,6 +72,7 @@ Verilog_Repository/
 │       └── top_mpu6050_iic_*.v         # Floating-point/DSP conversion arithmetic units
 │
 ├── system_integration/                 # Full System Hardware Interconnect Top Modules
+│   ├── complementary_filter_top.v      # Hardware wrapper combining complementary filter, pulse generator, and phi_acc
 │   ├── Attitude_Control_System_Top.v   # Complete FPGA Attitude Control Loop Top Integration
 │   ├── Alti_Yaw_top.v                  # Barometric Altitude & Yaw Gyro Heading Top Integration
 │   ├── yaw_control_top.v               # Yaw Filter and Cascaded Heading Controller Top Integration
