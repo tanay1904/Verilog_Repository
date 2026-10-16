@@ -94,7 +94,8 @@ Verilog_Repository/
 ├── multirate_dsp/                      # High-Speed Multirate Digital Signal Processing Engine
 │   ├── multirate_filter_top.v          # 120 MSPS decimation-by-3 & interpolation-by-12 51-tap FIR engine
 │   ├── tb_multirate_filter.v           # Verification testbench for decimation and interpolation
-│   └── fir_coeffs.coe                  # 51-tap Hamming window FIR filter coefficients
+│   ├── fir_coeffs.coe                  # 51-tap Hamming window FIR filter coefficients
+│   └── generate_ips.tcl                # Turnkey Vivado automation script generating decimation & interpolation IPs
 │
 ├── constraints/                        # Board-Level Physical Pin and Timing Constraints
 │   ├── pynq_test_flight.xdc            # Master PYNQ-Z2 flight constraints (PWM ESCs JA1/JA4/JB1/JB4 & I2C)
