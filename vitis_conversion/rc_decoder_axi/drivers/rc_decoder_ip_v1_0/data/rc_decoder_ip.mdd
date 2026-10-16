@@ -1,0 +1,10 @@
+
+
+OPTION psf_version = 2.1;
+
+BEGIN DRIVER rc_decoder_ip
+	OPTION supported_peripherals = (rc_decoder_ip);
+	OPTION copyfiles = all;
+	OPTION VERSION = 1.0;
+	OPTION NAME = rc_decoder_ip;
+END DRIVER
